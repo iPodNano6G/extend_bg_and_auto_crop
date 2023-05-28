@@ -15,79 +15,39 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            aria-hidden="true"
+            class="me-2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+            />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+          <strong>Image processing </strong>
+        </a>
+      </div>
+    </div>
     <div>
-      <div class="navbar navbar-dark bg-dark shadow-sm">
-        <div class="container">
-          <a href="#" class="navbar-brand d-flex align-items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              aria-hidden="true"
-              class="me-2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
-              />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
-            <strong>Image processing </strong>
-          </a>
-        </div>
-      </div>
-      <div class="container text-center">
-        <div class="row">
-          <div class="col-lg-6">
-            <img class="img-size" src="./images/man.jpg" alt="" />
-            <p>원본 이미지 525 x 700 px</p>
-          </div>
-          <div class="col-lg-6">
-            <img class="img-size" src="./images/man-Dall_E2.png" alt="" />
-            <p>배경 확장된 이미지 1024 x 1024 px</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <img class="img-size" src="./images/man.jpg" alt="" />
-            <p>Person</p>
-          </div>
-          <div class="col">
-            <img class="img-size" src="./images/man-top.jpg" alt="" />
-            <p>Top</p>
-          </div>
-          <div class="col">
-            <img src="./images/man_panorama_withFace.png" alt="" />
-            <p>panorama_withFace</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <a href="./images/removeBgImage.png" download="다운로드"
-              ><img src="./images/removeBgImage.png" alt=""
-            /></a>
-            <p>배경 삭제된 이미지</p>
-            <div class="">이미지를 누르면 다운로드 됩니다.</div>
-          </div>
-          <div class="col">
-            <a href="./images/removeBgImage_black.png" download="다운로드"
-              ><img src="./images/removeBgImage_black.png" alt=""
-            /></a>
-            <p>배경 검은색</p>
-            <div class="">이미지를 누르면 다운로드 됩니다.</div>
-          </div>
-        </div>
-
-        <button type="button" class="btn btn-primary btn-lg">배경 흰색</button>
-        <button type="button" class="btn btn-secondary btn-lg">
-          배경 검정색
-        </button>
-      </div>
+      <section>
+        <h1>배경이 포함된 이미지</h1>
+        <div id="imageContainer"></div>
+        <h1>여기서부터는 배경 없는 이미지</h1>
+        <div id="imageContainerBg"></div>
+        <button id="change" onclick="changeBackground();">black change</button>
+      </section>
     </div>
 
     <script
