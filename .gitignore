@@ -1,0 +1,4 @@
+sources/
+.env
+back-end/clothes-detect-test-0cf2de14676d.json
+back-end/*.onnx
