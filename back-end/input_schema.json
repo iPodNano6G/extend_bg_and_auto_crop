@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+
+  "properties": {
+    "image_url": {
+      "type": "string",
+      "description": "광고 배너에 삽입될 이미지의 원본 주소",
+      "examples": [
+        "https://이미지주소"
+      ]
+    },
+
+    "body_parts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "(face만 구현, 나머지 미구현)포함하기를 원하는 신체 부위. mediaPipe에서 지원하는 33가지 신체 부위와, 얼굴 전체에 해당하는 face를 포함할수 있습니다. 기본값은 blank",
+      "examples": [
+        ["face", "Right_ankle"],
+        ["face"],
+        ["Left_knee", "Right_knee"]
+      ]
+    },
+    "margins": {
+      "type": "object",
+      "description": "bounding box와 실제 crop 영역 간의 간격",
+      "properties": {
+        "item_margin": {
+          "type": "string",
+          "pattern": "^[0-9]+(px|%)$",
+          "description": "탐지된 아이템의 bounding box와 실제 crop 영역 간의 간격. px형태와 %형태로 요청 가능. 기본값 0%",
+          "examples": [
+            "50px",
+            "10%"
+          ]
+        },
+        "face_margin": {
+          "type": "string",
+          "pattern": "^[0-9]+(px|%)$",
+          "description": "탐지된 얼굴의 bounding box와 실제 crop 영역 간의 간격. px형태와 %형태로 요청 가능. 기본값 10%",
+          "examples": [
+            "50px",
+            "10%"
+          ]
+        },
+        "whole_margin": {
+          "type": "string",
+          "pattern": "^[0-9]+(px|%)$",
+          "description": "의류 아이템과 선택한 신체 부위를 모두 포함하는 사각형과 실제 crop 영역 간의 간격. px형태와 %형태로 요청 가능. 기본값 15%",
+          "examples": [
+            "50px",
+            "10%"
+          ]
+        }
+      }
+    },
+    "aspect_ratio": {
+      "type": ["object", "string"],
+      "description": "원하는 너비, 높이 비율을 입력하거나, vertical, horizontal 등을 입력.",
+      "properties": {
+        "mode": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "width": {
+                  "type": "number"
+                },
+                "height": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "type": "string",
+              "enum": ["vertical", "horizontal"]
+            }
+          ]
+        }
+      },
+      "examples": [
+        {
+          "width": 16,
+          "height": 9
+        },
+        "vertical"
+      ]
+      
+    },
+    "subject_location": {
+      "type": "string",
+      "enum": ["left", "right", "top", "bottom", "center"],
+      "description": "의상 아이템과 선택한 신체부위를 포함한 최소 영역이 배치될 곳."
+    },
+    "return_type": {
+      "type": "string",
+      "enum": ["pixel", "px", "norm", "noramalized"],
+      "description": "원하는 픽셀 응답 형식을 선택. pixel일 경우 ((좌, 상),(우, 하)) 형태로 픽셀 출력. norm일 경우 이를 [0,1]로 정규화해서 출력"
+    },
+    "retunr_image": {
+      "type": "boolean",
+      "description": "true일 경우 이미지를 리턴, false일 경우 좌표만 리턴. 기본값은 false"
+    }
+  },
+  "required": ["image_url"],
+  "additionalProperties": true,
+  "description": "원하는 crop된 이미지의 정보를 담은 request body."
+}
