@@ -1,26 +1,37 @@
-import image_downloader
-import mask_processor
-import outpainting_processor
-
-import os
-import sys
 import json
 
-import cv2
+from modules import image_processor
+from modules import database
 
-with open(sys.argv[1], 'r') as file:
+with open("download.json", 'r') as file:
     shoppingmall_data = json.load(file)
 
-ratio = 0
-new_folder = shoppingmall_data["seller"]+"/"+shoppingmall_data["brand"]
-os.makedirs(new_folder, exist_ok=True)
+seller_brand_path = shoppingmall_data["seller"]+"/"+shoppingmall_data["brand"]
 
-for data in shoppingmall_data["image_list"]:
-    image_url = data["image_url"]
-    folder_name = new_folder+"/"+data["product_name"]
-    original_image_path = image_downloader.download_image(image_url, folder_name, "original.jpg")
-    mask = mask_processor.generate_mask_of(original_image_path)
-    transparent_bordered_image = outpainting_processor.make_transparent_border(original_image_path, mask, ratio)
-    dallE_image_path = outpainting_processor.outpaint_image_with_DallE(transparent_bordered_image, folder_name)
+imageDownloder = image_processor.ImageDownloader()
+imageFactory = image_processor.ImageFactory()
 
-    outpainting_processor.recover_orignal_image_size(original_image_path, dallE_image_path, transparent_bordered_image, ratio)
+imageProcessor = image_processor.ImageProcessor()
+
+faceDetector = image_processor.FaceDetector()
+clothesDetector = image_processor.ClothesDetector()
+
+databaseManager = database.DatabaseManager()
+
+for product in shoppingmall_data["product_list"]:
+    save_path = "image_data/"+seller_brand_path+"/"+product["name"]
+    image_url = product["url"]
+    image_path = imageDownloder.download_image(image_url, save_path, "original.jpg")
+    image = imageFactory.create_image(image_path, None)
+
+    result_image = imageProcessor.process(image)
+
+    faceData = faceDetector.detectFace(image)
+    face = faceData.getFace(1)
+    
+    clothesDataList = clothesDetector.localize_objects(image)
+    clothes = clothesDataList.getClothes(product["type_of_clothes"])
+    clothes.denormalizeByImageSize(image)
+
+    databaseManager.insertToClothesDataCollection(image, image_url, result_image, face, clothes)
+

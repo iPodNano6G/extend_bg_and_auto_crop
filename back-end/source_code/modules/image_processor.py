@@ -1,22 +1,10 @@
-import requests
 import cv2
 import numpy as np
 import onnxruntime
 import os
 import subprocess
 
-import temp
-
-class ImageDownloader:
-    def download_image(self, url, folder_path, file_name):
-        response = requests.get(url)
-        if response.status_code == 200:
-            os.makedirs(folder_path, exist_ok=True)
-            image_path = folder_path+"/"+file_name
-            with open(image_path, 'wb') as file:
-                file.write(response.content)
-            return image_path
-
+from modules import fileManager
 
 class Image:
     def __init__(self, filepath, cv_image):
@@ -27,6 +15,9 @@ class Image:
             self.cv_image = cv2.imread(filepath)
         self.height = self.cv_image.shape[0]
         self.width = self.cv_image.shape[1]
+        self.url = None
+    def setURL(self, url):
+        self.url = url
 class ImageFactory:
     def create_image(self,filepath, cv_image):
         image = Image(filepath, cv_image)
@@ -227,7 +218,7 @@ class ImageChopper:
         object_move_x = paddedImage.x_offset
         object_move_y = paddedImage.y_offset
 
-        magick_command = SystemChecker.returnMagickCommand
+        magick_command = SystemChecker().returnMagickCommand()
 
         if mask.smallest_box_x == 0:
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "west", "-chop", (str(paddedImage.x_offset)+"x"+"0"), "temp_alpha.png"])
@@ -238,8 +229,9 @@ class ImageChopper:
         if mask.smallest_box_x + mask.smallest_box_width + 10 >= mask.width:
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "east", "-chop", (str(paddedImage.x_offset)+"x"+"0"), "temp_alpha.png"])
         if mask.smallest_box_y + mask.smallest_box_height + 10 >= mask.height:
+            print(magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png")
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png"])        
-        
+            
         folder_path = os.path.dirname(image_path)
         file_path = folder_path + "/result.png"
         os.rename("temp_alpha.png", file_path)
@@ -248,44 +240,16 @@ class ImageChopper:
 
         return result
     
-class Face:
-    def __init__(self, left, top, right, bottom) -> None:
-        self.left = left
-        self.top = top
-        self.right = right
-        self.bottom = bottom
-class FaceDataList:
-    def __init__(self, face_dict_data) -> None:
-        self.data = face_dict_data
-    def getFace(self, face_number):
-        if type(self.data) is tuple:
-            return (None, None)
-        face_location = self.data["face_"+str(face_number)]["facial_area"]
-        return Face(face_location[0], face_location[1], face_location[2], face_location[3])
-    
-class FaceDetector:
-    def detectFace(self,image):
-        from retinaface import RetinaFace
-        faceDataList = FaceDataList(RetinaFace.detect_faces(image.filepath))
-        return faceDataList
-class BoxDrower:
-    def drawBox(self, image, left_top, right_bottom):
-        if left_top == None:
-            print("there is no face")
-            return
-        face_bounding_box = image.cv_image.copy()
-        cv2.rectangle(face_bounding_box, left_top, right_bottom, (0, 255, 0), 2)
-        cv2.imwrite(os.path.dirname(image.filepath)+"/"+'face_bounding_box.jpg', face_bounding_box)
 
 class ImageProcessor:
     def __init__(self):
-        self.maskGenerator = temp.MaskGenerator()
-        self.paddedImageFactory = temp.PaddedImageFactory()
-        self.dallEImageGenerator= temp.DallEImageGenerator()
-        self.featheredImageFactory = temp.FeatheredImageFactory()
-        self.alphaCompositer = temp.AlphaCompositer()
-        self.imageChopper = temp.ImageChopper()
-        self.imageDownloder = temp.ImageDownloader()
+        self.maskGenerator = MaskGenerator()
+        self.paddedImageFactory = PaddedImageFactory()
+        self.dallEImageGenerator= DallEImageGenerator()
+        self.featheredImageFactory = FeatheredImageFactory()
+        self.alphaCompositer = AlphaCompositer()
+        self.imageChopper = ImageChopper()
+        self.imageDownloder = fileManager.ImageDownloader()
     def process(self, image):
         mask = self.maskGenerator.create_mask(image)
         padded_image = self.paddedImageFactory.create_padded_image(image, mask, 55)
@@ -294,79 +258,3 @@ class ImageProcessor:
         resized_outpainted_image = self.alphaCompositer.alphaCompositingWithResizing(feathered_image, dallE_image)
         result_image = self.imageChopper.chopInvadingBorderUsingMask(resized_outpainted_image, mask, image.filepath)
         return result_image
-
-class ClothesDetector:
-    def localize_objects(self, image):
-        from google.cloud import vision
-        client = vision.ImageAnnotatorClient()
-
-        with open(image.filepath, 'rb') as image_file:
-            content = image_file.read()
-        image = vision.Image(content=content)
-
-        objects = client.object_localization(
-            image=image).localized_object_annotations
-
-        return ClothesObjectsList(objects)
-class Clothes:
-    def __init__(self, type_of_clothes, left, top, right, bottom) -> None:
-        self.type_of_clothes = type_of_clothes
-        self.normalized_left = left
-        self.normalized_top = top
-        self.normalized_right = right
-        self.normalized_bottom = bottom
-        self.left = None
-        self.top = None
-        self.right = None
-        self.bottom = None
-    def denormalizeByImageSize(self, image):
-        self.left = int(self.normalized_left * image.width)
-        self.top = int(self.normalized_top * image.height)
-        self.right = int(self.normalized_right * image.width)
-        self.bottom = int(self.normalized_bottom * image.height)
-
-class ClothesObjectsList:
-    def __init__(self, objects) -> None:
-        self.objects = objects
-    def getClothes(self, type_of_clothes):
-        for object_ in self.objects:
-            if object_.name == type_of_clothes:
-                break
-        clothes_data_normalized_vertices = object_.bounding_poly.normalized_vertices
-
-        normalized_clothes_left = clothes_data_normalized_vertices[0].x
-        normalized_clothes_top = clothes_data_normalized_vertices[0].y
-        normalized_clothes_right = clothes_data_normalized_vertices[2].x
-        normalized_clothes_bottom = clothes_data_normalized_vertices[2].y
-        return Clothes(type_of_clothes, normalized_clothes_left,normalized_clothes_top, normalized_clothes_right, normalized_clothes_bottom)
-    
-class DatabaseManager:
-    def __init__(self):
-        from pymongo import MongoClient
-        self.client = MongoClient('mongodb://localhost:27017/')
-    def insertToClothesDataCollection(self, orignalImage, finalImage, face, clothes):
-        db = self.client['fashionImageTest']
-        collection = db['clothesData']
-        inserted_data = {
-            "original_image_path": orignalImage.filepath,
-            "dalle_image_path": finalImage.filepath,
-            "dalle_image_width": finalImage.width,
-            "dalle_image_height": finalImage.height,
-            "x_offset": finalImage.x_offset,
-            "y_offset": finalImage.y_offset,
-            "face": {
-                "left_line_pixel": face.left + finalImage.x_offset,
-                "right_line_pixel": face.right + finalImage.x_offset,
-                "top_line_pixel": face.top + finalImage.y_offset,
-                "bottom_line_pixel": face.bottop + finalImage.y_offset,
-            },
-            "clothes": {
-                "type_of_clothes": clothes.type_of_clothes,
-                "left_line_pixel": clothes.left + finalImage.x_offset,
-                "right_line_pixel": clothes.right + finalImage.x_offset,
-                "top_line_pixel": clothes.top + finalImage.y_offset,
-                "bottom_line_pixel": clothes.bottop + finalImage.y_offset,
-            }
-        }
-        insert_result = collection.insert_one(inserted_data)
-        print(f"Inserted document ID: {insert_result.inserted_id}")
