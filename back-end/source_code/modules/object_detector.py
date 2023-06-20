@@ -17,9 +17,10 @@ class FaceDataList:
         return Face(face_location[0], face_location[1], face_location[2], face_location[3])
     
 class FaceDetector:
-    def detectFace(self,image):
+    # https://github.com/serengil/retinaface
+    def detectFace(self, image):
         from retinaface import RetinaFace
-        faceDataList = FaceDataList(RetinaFace.detect_faces(image.filepath))
+        faceDataList = FaceDataList(RetinaFace.detect_faces(image.cv_image))
         return faceDataList
 class BoxDrower:
     def drawBox(self, image, left_top, right_bottom):

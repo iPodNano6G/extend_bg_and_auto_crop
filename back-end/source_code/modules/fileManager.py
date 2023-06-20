@@ -1,4 +1,5 @@
 import requests
+import os
 class ImageDownloader:
     def download_image(self, url, folder_path, file_name):
         response = requests.get(url)
@@ -7,4 +8,5 @@ class ImageDownloader:
             image_path = folder_path+"/"+file_name
             with open(image_path, 'wb') as file:
                 file.write(response.content)
-            return image_path
+            return os.path.normpath(os.path.abspath(image_path))
+

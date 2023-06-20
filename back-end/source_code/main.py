@@ -1,20 +1,24 @@
 import json
+import sys
 
 from modules import image_processor
+from modules import fileManager
+from modules import object_detector
 from modules import database
 
-with open("download.json", 'r') as file:
+
+with open(sys.argv[1], 'r', encoding='UTF8') as file:
     shoppingmall_data = json.load(file)
 
 seller_brand_path = shoppingmall_data["seller"]+"/"+shoppingmall_data["brand"]
 
-imageDownloder = image_processor.ImageDownloader()
+imageDownloder = fileManager.ImageDownloader()
 imageFactory = image_processor.ImageFactory()
 
 imageProcessor = image_processor.ImageProcessor()
 
-faceDetector = image_processor.FaceDetector()
-clothesDetector = image_processor.ClothesDetector()
+faceDetector = object_detector.FaceDetector()
+clothesDetector = object_detector.ClothesDetector()
 
 databaseManager = database.DatabaseManager()
 
@@ -33,5 +37,6 @@ for product in shoppingmall_data["product_list"]:
     clothes = clothesDataList.getClothes(product["type_of_clothes"])
     clothes.denormalizeByImageSize(image)
 
-    databaseManager.insertToClothesDataCollection(image, image_url, result_image, face, clothes)
+    
 
+    databaseManager.insertToClothesDataCollection(image, image_url, result_image, face, clothes)

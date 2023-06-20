@@ -4,15 +4,42 @@ import onnxruntime
 import os
 import subprocess
 
-from modules import fileManager
+from modules import fileManager, system
+
+        
+class ImageSaver:
+    def saveImage(self, file_path, image, name = None):
+        if name is None:
+            name = "unlabeled.jpg"
+            if os.path.isdir(file_path): # 입력 경로가 파일이 아니라 디렉터리일 경우, 
+                file_path = os.path.dirname(file_path)
+                save_path = os.path.join(file_path, name)
+            else:
+                file_path = os.path.dirname(file_path)
+                save_path = os.path.join(file_path, name)
+        else:
+            if '.' not in name:
+                name = name + ".jpg"
+            if os.path.isdir(file_path): # 입력 경로가 파일이 아니라 디렉터리일 경우, 
+                file_path = os.path.dirname(file_path)
+                save_path = os.path.join(file_path, name)
+            else:
+                file_path = os.path.dirname(file_path)
+                save_path = os.path.join(file_path, name)       
+        print(save_path)     
+        cv2.imwrite(save_path, image.cv_image)
+
+
 
 class Image:
     def __init__(self, filepath, cv_image):
-        self.filepath = filepath
+        if filepath is not None:
+            self.filepath = os.path.abspath(filepath)
         if cv_image is not None:
             self.cv_image = cv_image
         else:
-            self.cv_image = cv2.imread(filepath)
+            img_array = np.fromfile(filepath, np.uint8)
+            self.cv_image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         self.height = self.cv_image.shape[0]
         self.width = self.cv_image.shape[1]
         self.url = None
@@ -92,8 +119,8 @@ class PaddedImageFactory:
 class DallEImage(PaddedImage):
     def __init__(self, filepath, cv_image, offset, ratio):
         super().__init__(filepath, cv_image, offset, ratio)
-class DallEImageGenerator:
-    def createDallEImage(self, imageDownloader, padded_image, image_path):
+class Outpainter:
+    def outpaintUsingDallE(self, imageDownloader, padded_image, image_path):
         if not isinstance(padded_image, PaddedImage):
             raise ValueError("Invalid input. Only objects of class PaddedImage are allowed.")
         
@@ -115,9 +142,8 @@ class DallEImageGenerator:
 
         folder_path = os.path.dirname(image_path)
         dallE_image_path = imageDownloader.download_image(image_url, folder_path, "DallE.png" )
-        dallE_CV_image = cv2.imread(dallE_image_path)
 
-        dallE_obj = DallEImage(dallE_image_path, dallE_CV_image, (padded_image.x_offset,padded_image.y_offset), padded_image.ratio)
+        dallE_obj = DallEImage(dallE_image_path, None, (padded_image.x_offset,padded_image.y_offset), padded_image.ratio)
 
         return dallE_obj
 
@@ -195,21 +221,11 @@ class AlphaCompositer:
             magick_command = "magick"
         subprocess.run([magick_command,"composite", "-geometry", "+" + str(x_offset) + "+" +str(y_offset), "temp_fearthered.png", "temp_alpha.png",  "temp_alpha.png"])
 
-        cv_image_composition = cv2.imread("temp_alpha.png")
-        AlphaComposited_obj = PaddedImage("temp_alpha.png", cv_image_composition, (x_offset, y_offset), dallE_image.ratio)
+        AlphaComposited_obj = PaddedImage("temp_alpha.png", None, (x_offset, y_offset), dallE_image.ratio)
 
         return AlphaComposited_obj
     
-class SystemChecker:
-    def __init__(self):
-        import platform
-        self.system = platform.system()
-    def returnMagickCommand(self):
-        if self.system == 'Linux':
-            magick_command = "./magick.appimage"
-        elif self.system == 'Windows':
-            magick_command = "magick"
-        return magick_command
+
 
 
 class ImageChopper:
@@ -218,7 +234,8 @@ class ImageChopper:
         object_move_x = paddedImage.x_offset
         object_move_y = paddedImage.y_offset
 
-        magick_command = SystemChecker().returnMagickCommand()
+
+        magick_command = system.SystemChecker().returnMagickCommand()
 
         if mask.smallest_box_x == 0:
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "west", "-chop", (str(paddedImage.x_offset)+"x"+"0"), "temp_alpha.png"])
@@ -231,12 +248,13 @@ class ImageChopper:
         if mask.smallest_box_y + mask.smallest_box_height + 10 >= mask.height:
             print(magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png")
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png"])        
-            
-        folder_path = os.path.dirname(image_path)
+        '''
+        folder_path = os.path.abspath(image_path)
         file_path = folder_path + "/result.png"
+        os.remove(file_path)
         os.rename("temp_alpha.png", file_path)
-        result_cv_image = cv2.imread(file_path)
-        result = PaddedImage(file_path, result_cv_image, (object_move_x, object_move_y), None)
+        '''
+        result = PaddedImage("temp_alpha.png", None, (object_move_x, object_move_y), None)
 
         return result
     
@@ -245,7 +263,7 @@ class ImageProcessor:
     def __init__(self):
         self.maskGenerator = MaskGenerator()
         self.paddedImageFactory = PaddedImageFactory()
-        self.dallEImageGenerator= DallEImageGenerator()
+        self.outpainter= Outpainter()
         self.featheredImageFactory = FeatheredImageFactory()
         self.alphaCompositer = AlphaCompositer()
         self.imageChopper = ImageChopper()
@@ -253,8 +271,9 @@ class ImageProcessor:
     def process(self, image):
         mask = self.maskGenerator.create_mask(image)
         padded_image = self.paddedImageFactory.create_padded_image(image, mask, 55)
-        dallE_image = self.dallEImageGenerator.createDallEImage(self.imageDownloder, padded_image, image.filepath)
+        dallE_image = self.outpainter.outpaintUsingDallE(self.imageDownloder, padded_image, image.filepath)
         feathered_image = self.featheredImageFactory.applyFeather(image)
         resized_outpainted_image = self.alphaCompositer.alphaCompositingWithResizing(feathered_image, dallE_image)
         result_image = self.imageChopper.chopInvadingBorderUsingMask(resized_outpainted_image, mask, image.filepath)
+        ImageSaver().saveImage(image.filepath, result_image, "result")
         return result_image
