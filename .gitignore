@@ -1,4 +1,4 @@
-sources/
 .env
 *.onnx
 google_cloud_vision_key.json
+__pycache__/

@@ -32,7 +32,7 @@ class ImageSaver:
 
 
 class Image:
-    def __init__(self, filepath, cv_image):
+    def __init__(self, filepath, cv_image, url = None):
         if filepath is not None:
             self.filepath = os.path.abspath(filepath)
         if cv_image is not None:
@@ -42,7 +42,7 @@ class Image:
             self.cv_image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         self.height = self.cv_image.shape[0]
         self.width = self.cv_image.shape[1]
-        self.url = None
+        self.url = url
     def setURL(self, url):
         self.url = url
 class ImageFactory:

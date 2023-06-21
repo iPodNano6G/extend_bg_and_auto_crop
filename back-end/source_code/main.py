@@ -5,7 +5,7 @@ from modules import image_processor
 from modules import fileManager
 from modules import object_detector
 from modules import database
-
+from modules import photoshop
 
 with open(sys.argv[1], 'r', encoding='UTF8') as file:
     shoppingmall_data = json.load(file)
@@ -22,11 +22,13 @@ clothesDetector = object_detector.ClothesDetector()
 
 databaseManager = database.DatabaseManager()
 
+photoshop_ = photoshop.Photoshop()
+
 for product in shoppingmall_data["product_list"]:
     save_path = "image_data/"+seller_brand_path+"/"+product["name"]
     image_url = product["url"]
     image_path = imageDownloder.download_image(image_url, save_path, "original.jpg")
-    image = imageFactory.create_image(image_path, None)
+    image = imageFactory.create_image(image_path, None, image_url)
 
     result_image = imageProcessor.process(image)
 
@@ -37,6 +39,6 @@ for product in shoppingmall_data["product_list"]:
     clothes = clothesDataList.getClothes(product["type_of_clothes"])
     clothes.denormalizeByImageSize(image)
 
-    
+    no_background_image_path = photoshop_.backgroundRemover(image_path)
 
     databaseManager.insertToClothesDataCollection(image, image_url, result_image, face, clothes)
