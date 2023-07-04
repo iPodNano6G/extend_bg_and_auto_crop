@@ -5,16 +5,22 @@ from modules import image_processor
 
 class Face:
     def __init__(self, left, top, right, bottom) -> None:
-        self.left = int(left)
-        self.top = int(top)
-        self.right = int(right)
-        self.bottom = int(bottom)
+        if None in [left, top, right, bottom]:
+            self.left = None
+            self.top = None
+            self.right = None
+            self.bottom = None
+        else:
+            self.left = int(left)
+            self.top = int(top)
+            self.right = int(right)
+            self.bottom = int(bottom)
 class FaceDataList:
     def __init__(self, face_dict_data) -> None:
         self.data = face_dict_data
     def getFace(self, face_number):
         if type(self.data) is tuple:
-            return (None, None)
+            return Face(None, None, None, None)
         face_location = self.data["face_"+str(face_number)]["facial_area"]
         return Face(face_location[0], face_location[1], face_location[2], face_location[3])
     
@@ -26,6 +32,7 @@ class FaceDetector:
         return faceDataList
 class BoxDrower:
     def drawBox(self, image, left_top, right_bottom, name):
+        print(left_top, right_bottom)
         if left_top == None:
             print("there is no face")
             return
