@@ -25,9 +25,20 @@ class ImageSaver:
                 save_path = os.path.join(file_path, name)
             else:
                 file_path = os.path.dirname(file_path)
-                save_path = os.path.join(file_path, name)       
-        print(save_path)     
-        cv2.imwrite(save_path, image.cv_image)
+                save_path = os.path.join(file_path, name)
+
+
+        extension = os.path.splitext(save_path)[1] # 이미지 확장자
+        if isinstance(image, np.ndarray):
+            result, encoded_img = cv2.imencode(extension, image)
+        else:
+            result, encoded_img = cv2.imencode(extension, image.cv_image)
+        
+        if result:
+            with open(save_path, mode='w+b') as f:
+                encoded_img.tofile(f)
+        
+        return save_path
 
 
 
@@ -46,8 +57,8 @@ class Image:
     def setURL(self, url):
         self.url = url
 class ImageFactory:
-    def create_image(self,filepath, cv_image):
-        image = Image(filepath, cv_image)
+    def create_image(self,filepath, cv_image, url = None):
+        image = Image(filepath, cv_image, url)
         return image
 
 class Mask(Image):
@@ -246,7 +257,6 @@ class ImageChopper:
         if mask.smallest_box_x + mask.smallest_box_width + 10 >= mask.width:
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "east", "-chop", (str(paddedImage.x_offset)+"x"+"0"), "temp_alpha.png"])
         if mask.smallest_box_y + mask.smallest_box_height + 10 >= mask.height:
-            print(magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png")
             subprocess.run([magick_command,"convert", "temp_alpha.png", "-gravity", "south", "-chop", ("0"+"x"+str(paddedImage.y_offset)), "temp_alpha.png"])        
         '''
         folder_path = os.path.abspath(image_path)
@@ -268,12 +278,21 @@ class ImageProcessor:
         self.alphaCompositer = AlphaCompositer()
         self.imageChopper = ImageChopper()
         self.imageDownloder = fileManager.ImageDownloader()
+        self.imageSaver = ImageSaver()
     def process(self, image):
         mask = self.maskGenerator.create_mask(image)
+        self.imageSaver.saveImage(image.filepath, mask, "mask.png")
+
         padded_image = self.paddedImageFactory.create_padded_image(image, mask, 55)
+        self.imageSaver.saveImage(image.filepath, padded_image, "padded_image.png")
+
         dallE_image = self.outpainter.outpaintUsingDallE(self.imageDownloder, padded_image, image.filepath)
+
         feathered_image = self.featheredImageFactory.applyFeather(image)
+        self.imageSaver.saveImage(image.filepath, feathered_image, "feathered.png")
+
         resized_outpainted_image = self.alphaCompositer.alphaCompositingWithResizing(feathered_image, dallE_image)
+
         result_image = self.imageChopper.chopInvadingBorderUsingMask(resized_outpainted_image, mask, image.filepath)
-        ImageSaver().saveImage(image.filepath, result_image, "result")
+        result_image.filepath = self.imageSaver.saveImage(image.filepath, result_image, "result")
         return result_image
