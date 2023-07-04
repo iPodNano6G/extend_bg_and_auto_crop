@@ -35,7 +35,4 @@ for product in shoppingmall_data["product_list"]:
     image_path = imageDownloder.download_image(image_url, save_path, "original.jpg")
     image = imageFactory.create_image(image_path, None, image_url)
 
-    clothesDataList = clothesDetector.localize_objects(image)
-    clothes = clothesDataList.getClothes(product["type_of_clothes"])
-    clothes.denormalizeByImageSize(image)
-    boxDrower.drawBox(image, (clothes.left, clothes.top), (clothes.right, clothes.bottom), "clothes")
+    no_background_image_path = photoshop_.remove_background(image_path)

@@ -11,7 +11,8 @@ class ImageDownloader:
             with open(image_path, 'wb') as file:
                 file.write(response.content)
             return os.path.normpath(os.path.abspath(image_path))
-
+        else:
+            print(response.status_code)
 class DocumentManager:
     def save_json_document(self, json_document, file_path):
         abs_path = os.path.abspath(file_path)
@@ -38,10 +39,10 @@ class JsonMaker:
                 "y_offset": finalImage.y_offset,
             },
             "face": {
-                "left_line_pixel": face.left + finalImage.x_offset,
-                "right_line_pixel": face.right + finalImage.x_offset,
-                "top_line_pixel": face.top + finalImage.y_offset,
-                "bottom_line_pixel": face.bottom + finalImage.y_offset,
+                "left_line_pixel": None if face.left is None else face.left + finalImage.x_offset,
+                "right_line_pixel": None if face.right is None else face.right + finalImage.x_offset,
+                "top_line_pixel": None if face.top is None else face.top + finalImage.y_offset,
+                "bottom_line_pixel": None if face.bottom is None else face.bottom + finalImage.y_offset,
             },
             "clothes": {
                 "type_of_clothes": clothes.type_of_clothes,

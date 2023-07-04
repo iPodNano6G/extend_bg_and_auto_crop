@@ -6,7 +6,7 @@
                 var idforceNotify = stringIDToTypeID( "forceNotify" );
                 desc349.putBoolean( idforceNotify, true );
                 var idnull = charIDToTypeID( "null" );
-                desc349.putPath( idnull, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\³²³à°ø¿ë º£ÀÌÁ÷ ÇÇÄÉ Æ¼¼ÅÃ÷ - ºí·¢\\original.jpg" ) );
+                desc349.putPath( idnull, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\º§Å©·Î »÷µé - ºê¸¯\\original.jpg" ) );
                 var idDocI = charIDToTypeID( "DocI" );
                 desc349.putInteger( idDocI, 72 );
                 var idtemplate = stringIDToTypeID( "template" );
@@ -71,7 +71,7 @@
                 var idPNGF = charIDToTypeID( "PNGF" );
                 desc255.putObject( idAs, idPNGF, desc256 );
                 var idIn = charIDToTypeID( "In  " );
-                desc255.putPath( idIn, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\³²³à°ø¿ë º£ÀÌÁ÷ ÇÇÄÉ Æ¼¼ÅÃ÷ - ºí·¢\\no_background.png" ) );
+                desc255.putPath( idIn, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\º§Å©·Î »÷µé - ºê¸¯\\no_background.png" ) );
                 var idDocI = charIDToTypeID( "DocI" );
                 desc255.putInteger( idDocI, 59 );
                 var idLwCs = charIDToTypeID( "LwCs" );

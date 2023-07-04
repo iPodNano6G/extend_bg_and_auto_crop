@@ -3,14 +3,9 @@
     "brand": "beanpole",
     "product_list": [
         {
-            "name": "남녀공용 베이직 피케 티셔츠 - 블랙",
-            "url": "https://img.ssfshop.com/cmd/LB_750x1000/src/https://img.ssfshop.com/goods/BPBR/23/02/15/GM0023021581678_0_ORGINL_20230327140102442.jpg",
-            "type_of_clothes": "top"
-        },
-        {
-            "name": "바서티 볼드 스트라이프 럭비 티셔츠 - 블루",
-            "url": "https://img.ssfshop.com/cmd/LB_750x1000/src/https://img.ssfshop.com/goods/BPBR/23/01/19/GM0023011962271_0_ORGINL_20230214162711402.jpg",
-            "type_of_clothes": "top"
+            "name": "벨크로 샌들 - 브릭",
+            "url": "https://img.ssfshop.com/cmd/LB_750x1000/src/https://img.ssfshop.com/goods/BPBR/23/03/07/GM0023030755674_0_THNAIL_ORGINL_20230525122715725.jpg",
+            "type_of_clothes": "Shoe"
         }
     ]
 }
