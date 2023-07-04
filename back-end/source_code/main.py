@@ -38,11 +38,9 @@ for product in shoppingmall_data["product_list"]:
 
     result_image = imageProcessor.process(image)
     boxDrower.drawBox(result_image, (result_image.x_offset, result_image.y_offset), (result_image.x_offset + image.width, result_image.y_offset + image.height), "box_result_box")
-    print((result_image.x_offset, result_image.y_offset), (result_image.x_offset + image.width, result_image.y_offset + image.height))
 
     faceData = faceDetector.detectFace(image)
     face = faceData.getFace(1)
-    print((face.left, face.top), (face.right, face.bottom))
     boxDrower.drawBox(image, (face.left, face.top), (face.right, face.bottom), "box_face")
     
 
