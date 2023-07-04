@@ -71,7 +71,7 @@
                 var idPNGF = charIDToTypeID( "PNGF" );
                 desc255.putObject( idAs, idPNGF, desc256 );
                 var idIn = charIDToTypeID( "In  " );
-                desc255.putPath( idIn, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\남녀공용 베이직 피케 티셔츠 - 블랙\\no_background.jpg" ) );
+                desc255.putPath( idIn, new File( "C:\\SDP\\automated_image_processing\\back-end\\source_code\\image_data\\ssfshop\\beanpole\\남녀공용 베이직 피케 티셔츠 - 블랙\\no_background.png" ) );
                 var idDocI = charIDToTypeID( "DocI" );
                 desc255.putInteger( idDocI, 59 );
                 var idLwCs = charIDToTypeID( "LwCs" );
