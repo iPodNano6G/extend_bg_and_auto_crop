@@ -1,5 +1,7 @@
 import cv2
 import os
+from modules import image_processor
+
 
 class Face:
     def __init__(self, left, top, right, bottom) -> None:
@@ -23,13 +25,14 @@ class FaceDetector:
         faceDataList = FaceDataList(RetinaFace.detect_faces(image.cv_image))
         return faceDataList
 class BoxDrower:
-    def drawBox(self, image, left_top, right_bottom):
+    def drawBox(self, image, left_top, right_bottom, name):
         if left_top == None:
             print("there is no face")
             return
-        face_bounding_box = image.cv_image.copy()
+        face_bounding_box = (image.cv_image).copy()
         cv2.rectangle(face_bounding_box, left_top, right_bottom, (0, 255, 0), 2)
-        cv2.imwrite(os.path.dirname(image.filepath)+"/"+'face_bounding_box.jpg', face_bounding_box)
+        imageSaver = image_processor.ImageSaver()
+        imageSaver.saveImage(image.filepath, face_bounding_box, name)
 
 class ClothesDetector:
     def localize_objects(self, image):
@@ -44,6 +47,7 @@ class ClothesDetector:
             image=image).localized_object_annotations
 
         return ClothesObjectsList(objects)
+    
 class Clothes:
     def __init__(self, type_of_clothes, left, top, right, bottom) -> None:
         self.type_of_clothes = type_of_clothes
@@ -66,7 +70,7 @@ class ClothesObjectsList:
         self.objects = objects
     def getClothes(self, type_of_clothes):
         for object_ in self.objects:
-            if object_.name == type_of_clothes:
+            if object_.name.lower() == type_of_clothes.lower():
                 break
         clothes_data_normalized_vertices = object_.bounding_poly.normalized_vertices
 
