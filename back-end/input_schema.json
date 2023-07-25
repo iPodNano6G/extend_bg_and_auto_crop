@@ -99,10 +99,11 @@
       "enum": ["pixel", "px", "norm", "noramalized"],
       "description": "원하는 픽셀 응답 형식을 선택. pixel일 경우 ((좌, 상),(우, 하)) 형태로 픽셀 출력. norm일 경우 이를 [0,1]로 정규화해서 출력"
     },
-    "retunr_image": {
+    "return_image": {
       "type": "boolean",
       "description": "true일 경우 이미지를 리턴, false일 경우 좌표만 리턴. 기본값은 false"
     }
+
   },
   "required": ["image_url"],
   "additionalProperties": true,
