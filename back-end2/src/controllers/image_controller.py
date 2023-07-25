@@ -14,4 +14,4 @@ def process_image():
     removed_border_pixel = int(request.args.get('removed_border_pixel', 2))
     image_bytes = request.files['image_data'].read()
     np_image = ImageConverter().convert_to_np_image(image_bytes)
-    processed_np_image = ImageProcessingService().process(np_image, ratio, recover_size, chop_image, outpainting_size, removed_border_pixel)
+    processed_np_image, x_offset, y_offset = ImageProcessingService().process(np_image, ratio, recover_size, chop_image, outpainting_size, removed_border_pixel)
