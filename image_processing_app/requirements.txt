@@ -1,0 +1,6 @@
+onnxruntime
+opencv-python
+google-cloud-vision
+python-dotenv
+openai
+retina-face
