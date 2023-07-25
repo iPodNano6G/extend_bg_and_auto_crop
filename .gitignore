@@ -3,3 +3,4 @@
 google_cloud_vision_key.json
 __pycache__/
 image_data/
+config.json
