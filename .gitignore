@@ -9,4 +9,3 @@ config.json
 test.py
 ssfshop/
 google_key.json
-image_processing_app/Dockerfile
