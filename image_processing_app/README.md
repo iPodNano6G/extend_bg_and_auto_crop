@@ -1,11 +1,12 @@
 # 이미지 프로세싱 앱
 # 소개
 이미지 자동 Crop 앱에 사용될 이미지를 처리하고 객체 인식 데이터를 제공하는 로컬 서버입니다.
+
 ![Flask App 모식도](./docs/images/flask.png)
 
-할 줄 아는 것이 Python 뿐이었던 저는 Python으로 이미지 처리 개발을 시작습니다. 그런데 서버를 Spring으로 구축해야 하는 상황이 오고 만 것입니다. java로 모조리 새로 구현하기는 싫었던 저는, 기존 코드를 기반으로 로컬 서버를 구축하고, Spring 서버가 API를 통해 이 것과 통신을 하도록 했습니다. 이런 것을 마이크로 서비스 아키텍처(Micro Service Architecture)라고 하더군요.  
+할 줄 아는 것이 Python 뿐이었던 저는 Python으로 이미지 처리 개발을 시작습니다. 그런데 서버를 Spring으로 구축해야 하는 상황이 오고 만 것입니다. java로 모조리 새로 구현하기는 싫었던 저는, 기존 코드를 기반으로 로컬 서버를 구축하고, Spring 서버가 API를 통해 이 것과 통신을 하도록 했습니다. 일종의 마이크로 서비스 아키텍처(Micro Service Architecture)라고 할 수 있겠네요.
 
-아무튼, 해당 서비스는 이미지 자동 Crop 앱을 위한 로컬 마이크로 서비스입니다.
+아무튼, 해당 앱은 이미지 자동 Crop 앱을 위한 로컬 마이크로 서비스입니다.
 
 ## Requirements
 작업 디렉토리를 `image_processing_app`로 변경하고 아래 명령어를 실행합니다. 
@@ -18,7 +19,7 @@ pip install -r requirements.txt
 python app.py
 ```
 ## Docker를 이용한 실행
-Docker를 이용하면, 별도의 패키지 설치나 작업 디렉토리 변경없이 서버를 실행할 수 있습니다. 하지만 실행에 앞서 .env를 통해 환경 변수를 등록해야 합니다. 아래를 참고하세요.
+Docker를 이용하면, 별도의 패키지 설치나 작업 디렉토리 변경없이 서버를 실행할 수 있습니다. 제가 Docker Hub에 올려놓은 이미지를 `pull`한 뒤에, `run`하면 됩니다. 하지만 실행에 앞서 .env를 통해 환경 변수를 등록해야 합니다. 아래를 참고하세요.
 ```bash
 docker pull henry914/image-processing-flask-app:0.1
 docker run -p 5000:5000 --env-file .env henry914/image-processing-flask-app:0.1
