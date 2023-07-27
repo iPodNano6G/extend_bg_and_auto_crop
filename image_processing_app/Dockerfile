@@ -1,5 +1,5 @@
 # 기본 이미지 설정
-FROM python:3.9-slim-buster
+FROM python:3.11.4-slim-bullseye
 
 # 작업 디렉토리 설정
 WORKDIR /app
