@@ -2,4 +2,6 @@
 *.png
 *.jpg
 test.py
-etc/secrets/google_key.json
+etc/secrets/
+docs/
+README.md

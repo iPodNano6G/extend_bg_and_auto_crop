@@ -1,7 +1,7 @@
+rembg[cpu]
 opencv-python
 google-cloud-vision
 openai
 retina-face
 flask
 python-dotenv
-rembg
