@@ -54,3 +54,10 @@ class Mask(Image):
         else:
             self.touch_border_bottom = False
             
+    def relocate_smallest_box(self, reduction_ratio, x_offset, y_offset):
+        self.smallest_box_x = int(reduction_ratio * self.smallest_box_x)
+        self.smallest_box_y = int(reduction_ratio * self.smallest_box_y)
+        self.smallest_box_width = int(reduction_ratio * self.smallest_box_width)
+        self.smallest_box_height = int(reduction_ratio * self.smallest_box_height)
+        self.smallest_box_x += x_offset
+        self.smallest_box_y += y_offset
