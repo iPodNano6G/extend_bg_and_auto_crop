@@ -22,16 +22,35 @@ class ImageProcessingService:
             outer_width = compsited_image.outer_image.shape[1]
             outer_height = compsited_image.outer_image.shape[0]
             outpainted_image = ImageResizer().resize(outpainted_image, outer_width, outer_height)
+            reduction_ratio = 1
             x_offset = compsited_image.x_offset
             y_offset = compsited_image.y_offset
             outpainted_image = ImageCompister().composite(outpainted_image, np_image, x_offset, y_offset)
         else:
-            reduction_ratio = outpainting_size * compsited_image.outer_image.shape[0]
+            reduction_ratio = outpainting_size / compsited_image.outer_image.shape[0]
             x_offset = int(compsited_image.x_offset * reduction_ratio)
             y_offset = int(compsited_image.y_offset * reduction_ratio)
         #############################################################
         if chop_image is True:
-            processed_image, x_offset, y_offset = ImageChoppingService().chop_according_to_mask(outpainted_image, mask, x_offset, y_offset)
+            chopped_image, x_offset, y_offset = ImageChoppingService().chop_according_to_mask(outpainted_image, mask, x_offset, y_offset)
+        
+        mask.relocate_smallest_box(reduction_ratio, x_offset, y_offset)
+        
+        result = {
+            "result_image": {
+                "image_data": chopped_image,
+                "width": chopped_image.shape[1],
+                "height": chopped_image.shape[0]
+            },
+            "original_x_offset": x_offset / chopped_image.shape[1],
+            "original_y_offset": y_offset / chopped_image.shape[0],
+            "mask": {
+                "smallest_box_x": mask.smallest_box_x / chopped_image.shape[1],
+                "smallest_box_y": mask.smallest_box_y / chopped_image.shape[0],
+                "smallest_box_width": mask.smallest_box_width / chopped_image.shape[1],
+                "smallest_box_height": mask.smallest_box_height / chopped_image.shape[0]
+            }
+        }
 
-        return processed_image
+        return result
     

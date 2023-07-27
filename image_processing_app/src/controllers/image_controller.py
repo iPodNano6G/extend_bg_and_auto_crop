@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 
 from services.aggregated_services.image_processing_service import ImageProcessingService
 from utils.image.image_converter import ImageConverter
+from utils.image.image_encoder import ImageEncoder
 
 image_controller  = Blueprint('image', __name__)
 
@@ -12,6 +13,10 @@ def process_image():
     chop_image = request.args.get('chop_image', 'True').lower() == 'true'
     outpainting_size = int(request.args.get('outpainting_size', 1024))
     removed_border_pixel = int(request.args.get('removed_border_pixel', 2))
+    
     image_bytes = request.files['image_data'].read()
     np_image = ImageConverter().convert_to_np_image(image_bytes)
-    processed_np_image, x_offset, y_offset = ImageProcessingService().process(np_image, ratio, recover_size, chop_image, outpainting_size, removed_border_pixel)
+    result = ImageProcessingService().process(np_image, ratio, recover_size, chop_image, outpainting_size, removed_border_pixel)
+
+    result["result_image"]["image_data"] = ImageEncoder().encode_np_image_base64(result["result_image"]["image_data"])
+    return jsonify(result)

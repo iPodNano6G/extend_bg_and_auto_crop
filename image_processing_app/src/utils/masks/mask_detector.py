@@ -2,11 +2,9 @@ import onnxruntime
 import cv2
 import numpy as np
 
-from config import unet_model_location
-
 class MaskDetector:
     def detect_mask(self, np_image):
-        model = onnxruntime.InferenceSession(unet_model_location)
+        model = onnxruntime.InferenceSession("../static/model_weight/unet.onnx")
         mask = cv2.resize(np_image, (320, 320))
         mask = mask.transpose((2, 0, 1))  # 채널 순서 변경
         mask = mask.astype(np.float32) / 255.0  # 정규화
