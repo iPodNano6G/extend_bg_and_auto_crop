@@ -49,3 +49,4 @@ export GOOGLE_APPLICATION_CREDENTIALS=../etc/secrets/google_key.json
 ```
 docker run -p 5000:5000 -v /host/(호스트의 service key 위치):/container/app/etc/secrets/google_key.json --env-file .env henry914/image-processing-flask-app:0.1
 ```
+Docker의 볼륨과 환경 변수를 사용하는 방법을 알고 계시다면, 직접 하시는 것이 더 좋습니다.
