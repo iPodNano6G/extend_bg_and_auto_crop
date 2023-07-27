@@ -8,4 +8,4 @@ config.json
 *.jpg
 test.py
 ssfshop/
-google_key.json
+image_processing_app/etc/secrets/
