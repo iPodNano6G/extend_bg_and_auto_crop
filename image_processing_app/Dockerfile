@@ -18,5 +18,4 @@ COPY . .
 
 WORKDIR /app/src
 # Flask 명령으로 앱 실행
-#CMD [ "python", "-m" , "app", "run", "--host=0.0.0.0"]
-CMD [ "python", "app.py"]
+CMD [ "python", "-m" , "app", "run", "--host=0.0.0.0"]
