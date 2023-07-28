@@ -11,11 +11,11 @@
 
 자세한 내용은 각 앱의 폴더를 확인해주세요.
 
-## [Flask App](image_processing_app) task list
+### [Flask App](image_processing_app) task list
 - [x] 객체 탐지 기능 구현
 - [x] 안면 탐지 기능 구현
 - [x] 이미지 아웃페인팅 기능 구현
 
-## Spring App task list
+### Spring App task list
 - [ ] 원본 이미지 스크래핑하고 저장하는 기능
 - [ ] 이미지 크롭 로직 개발
