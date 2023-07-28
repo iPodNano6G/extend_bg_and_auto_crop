@@ -1,8 +1,0 @@
-numpy
-onnxruntime
-opencv-python
-retina-face
-google-cloud-vision
-pymongo
-openai
-python-dotenv
