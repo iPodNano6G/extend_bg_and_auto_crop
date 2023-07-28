@@ -51,6 +51,5 @@ class ImageProcessingService:
                 "smallest_box_height": mask.smallest_box_height / chopped_image.shape[0]
             }
         }
-
         return result
     
