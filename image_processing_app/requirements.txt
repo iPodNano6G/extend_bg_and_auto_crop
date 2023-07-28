@@ -1,5 +1,5 @@
-rembg[cpu]
-opencv-python
+rembg
+opencv-python-headless
 google-cloud-vision
 openai
 retina-face

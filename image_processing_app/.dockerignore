@@ -1,7 +1,7 @@
 .env
 *.png
 *.jpg
-test.py
+src/test.py
 etc/secrets/
 docs/
 README.md

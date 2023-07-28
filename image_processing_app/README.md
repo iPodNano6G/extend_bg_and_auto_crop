@@ -48,6 +48,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=../etc/secrets/google_key.json
 ### Docker 이미지를 pull 해서 실행하는 경우
 `docker run`을 실행할 때, `-v` 옵션을 통해 호스트의 파일을 Docker 컨테이너에 전달하면 됩니다.
 ```
-docker run -p 5000:5000 -v /host/(호스트의 service key 위치):/container/app/etc/secrets/google_key.json --env-file .env henry914/image-processing-flask-app:0.1
+docker run -p 5000:5000 -v /.../(service key가 있는 폴더 디렉토리):/app/etc/secrets --env-file .env henry914/image-processing-flask-app
 ```
 Docker의 볼륨과 환경 변수를 사용하는 방법을 알고 계시다면, 직접 하시는 것이 더 좋습니다.
