@@ -6,7 +6,9 @@
 
 할 줄 아는 것이 Python 뿐이었던 저는 Python으로 이미지 처리 개발을 시작습니다. 그런데 서버를 Spring으로 구축해야 하는 상황이 오고 만 것입니다. java로 모조리 새로 구현하기는 싫었던 저는, 기존 코드를 기반으로 로컬 서버를 구축하고, Spring 서버가 API를 통해 이 것과 통신을 하도록 했습니다. 일종의 마이크로 서비스 아키텍처(Micro Service Architecture)라고 할 수 있겠네요.
 
-아무튼, 해당 앱은 이미지 자동 Crop 앱을 위한 로컬 마이크로 서비스입니다.
+아무튼, 해당 앱은 이미지 자동 Crop 앱을 위한 로컬 마이크로 서비스입니다.  
+
+이미치 처리 과정은 [이 문서](docs/outpainting_process.pdf)를 참고하세요.
 
 ## Requirements
 작업 디렉토리를 `image_processing_app`로 변경하고 아래 명령어를 실행합니다. 
